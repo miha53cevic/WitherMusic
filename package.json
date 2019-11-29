@@ -1,0 +1,14 @@
+{
+  "name": "withermusic",
+  "version": "1.0.0",
+  "description": "A cross-platform music player for priavte purposes",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "miha53cevic",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^7.1.2"
+  }
+}
