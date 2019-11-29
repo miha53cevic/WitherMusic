@@ -8,7 +8,18 @@
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Raleway'>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
     <link rel='stylesheet' href="main.css">
+    <script>
+        // Name conflicts
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+    </script>
     <script src='jquery/3.4.1/jquery.min.js'></script>
+    <script>
+        const tracks = window.nodeRequire('electron').remote.getGlobal('tracks');
+        console.log(tracks);
+    </script>
     <script src="index.js"></script>
 </head>
 
@@ -21,36 +32,25 @@
 
         <div class="time-slider">
             <i class="timer" id="current-time">00:00</i>
-            <input class="slider" type="range">
+            <input class="slider" id="slider-time" type="range">
             <i class="timer" id="end-time">00:00</i>
         </div>
 
         <nav class="navbar">
             <i id="step-backward" class="fa fa-step-backward fa-lg nav-item"></i>
-            <i id="play-pause" class="fa fa-pause fa-lg nav-item"></i>
+            <i id="play-pause" class="fa fa-play fa-lg nav-item"></i>
             <i id="step-forward" class="fa fa-step-forward fa-lg nav-item"></i>
             <i id="random" class="fa fa-random fa-lg nav-item"></i>
             <i id="repeat" class="fa fa-repeat fa-lg nav-item"></i>
             <i id="volume" class="fa fa-volume-up fa-lg nav-item"></i>
+            <input id="volume-slider" min="0" max="100" value="100" type="range">
         </nav>
 
         <i id="list-up" class="fa fa-chevron-circle-up fa-lg nav-item list-button"></i>
         <i id="list-down" class="fa fa-chevron-circle-down fa-lg nav-item list-button"></i>
     </main>
 
-    <div class="list">
-        <hr>
-        <p>Element</p>
-        <hr>
-        <p>Element</p>
-        <hr>
-        <p>Element</p>
-        <hr>
-        <p>Element</p>
-        <hr>
-        <p>Element</p>
-        <hr>
-    </div>
+    <div class="list"></div>
 
 </body>
 
