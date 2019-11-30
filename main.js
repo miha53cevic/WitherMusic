@@ -1,4 +1,7 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, dialog } = require('electron');
+
+// electron-json-config - npm package
+const config = require('electron-json-config');
 
 const fs = require('fs');
 const path = require("path")
@@ -33,7 +36,9 @@ function createWindow() {
         return arrayOfFiles;
     };
 
-    global.tracks = getAllFiles('C:/Users/Mihael/Music/');
+    // Get music folder path otherwise use default
+    global.tracks = getAllFiles(config.get('music-folder', 'C:/Users/Mihael/Music/'));
+    console.log("Config location: " + app.getPath('userData'));
 
     // Set application title
     win.setTitle('WitherMusic');
@@ -46,6 +51,47 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         win = null
+    });
+
+    const menu = Menu.buildFromTemplate([
+        {
+            label: 'File',
+            submenu: [
+                {
+                    label: 'Set music folder',
+                    click: function() { showOpen(); }
+                },
+                {
+                    label: 'Refresh',
+                    role: 'reload'
+                },
+                {
+                    label: 'Quit',
+                    click() {
+                        app.quit();
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Debug',
+            submenu: [
+                {
+                    label: 'ToogleDevTools',
+                    role: 'toggleDevTools'
+                },
+            ]
+        }
+    ]);
+
+    Menu.setApplicationMenu(menu);
+}
+
+function showOpen() {
+    dialog.showOpenDialog({ properties: [ 'openDirectory'] }).then(data => {
+        config.set('music-folder', data.filePaths[0]);
+        app.quit();
+        app.relaunch();
     });
 }
 

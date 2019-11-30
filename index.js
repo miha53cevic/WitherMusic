@@ -1,4 +1,4 @@
-let play_pause = 'play';
+let play_pause = 'pause';
 let random = false;
 let repeat = false;
 
@@ -10,27 +10,58 @@ window.onload = () => {
     time_loop();
 };
 
-function init() {
-
-    // Initialize player
-    audioPlayer = new Audio(tracks[current_track]);
-
-    // Check if audio has finished
-    audioPlayer.addEventListener('ended', () => {
-        current_track++;
-        audioPlayer.src = tracks[current_track];
-        audioPlayer.play();
-    });
-
+function create_tracks_list() {
     // Create the list of tracks
+    let i = 0;
     tracks.forEach(element => {
         $(".list").append("<hr>");
 
         // Remove path and take just the name
         const name = element.split('\\').pop();
 
-        $(".list").append(`<p>${name}</p>`);
+        $(".list").append(`<p id="${i}" class="list-p">${name}</p>`);
+
+        // Choose song with click on the list
+        // Add event on every <p> element in the list
+        $(".list").on('click', 'p', function () {
+            current_track = $(this).attr('id');
+            audioPlayer.src = tracks[current_track];
+
+            // Set to paused
+            play_pause = 'play';
+            $("#play-pause").removeClass();
+            $("#play-pause").addClass("fa fa-play fa-lg nav-item");
+        });
+
+        i++;
     });
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function init() {
+
+    // Initialize player
+    audioPlayer = new Audio(tracks[current_track]);
+    audioPlayer.play();
+
+    // Check if audio has finished
+    audioPlayer.addEventListener('ended', () => {
+        current_track++;
+        audioPlayer.src = tracks[current_track];
+        audioPlayer.play();
+
+        // Set the scroll to the next song
+        $(".list").data('clicked', false);
+    });
+
+    // Create the list of tracks
+    create_tracks_list();
 
     // Initialy hide list-down and the list
     $("#list-down").hide();
@@ -72,12 +103,40 @@ function init() {
         }
     });
 
+    // Space keypress for pause and play
+    $(window).keypress((e) => {
+        if (e.key === ' ' || e.key === 'Spacebar') {
+            $("#play-pause").removeClass();
+
+            if (play_pause == 'play') {
+                audioPlayer.play();
+                play_pause = 'pause';
+                $("#play-pause").addClass("fa fa-pause fa-lg nav-item");
+            } else if (play_pause == 'pause') {
+                audioPlayer.pause();
+                play_pause = 'play';
+                $("#play-pause").addClass("fa fa-play fa-lg nav-item");
+            }
+        }
+    });
+
     // Random
     $("#random").bind('click', () => {
         random = !random;
 
         if (random) {
             $("#random").css('background-color', 'rgba(128, 128, 128, 0.308)');
+
+            // Remove all child nodes
+            $(".list").empty();
+            // Shuffle the tracks array
+            shuffleArray(tracks);
+            // Create the new track list
+            create_tracks_list();
+            // Play the new current song
+            audioPlayer.src = tracks[current_track];
+            audioPlayer.play();
+
         } else {
             $("#random").css('background-color', 'transparent');
         }
@@ -102,6 +161,9 @@ function init() {
             current_track--;
             audioPlayer.src = tracks[current_track];
             audioPlayer.play();
+
+            // Set the scroll to the next song
+            $(".list").data('clicked', false);
         }
     });
 
@@ -111,6 +173,9 @@ function init() {
             current_track++;
             audioPlayer.src = tracks[current_track];
             audioPlayer.play();
+
+            // Set the scroll to the next song
+            $(".list").data('clicked', false);
         }
     });
 
@@ -120,17 +185,22 @@ function init() {
     });
 
     // Check if mouse is pressed and released so the loop doesn't take over
-    $("#slider-time").mousedown(function() {
+    $("#slider-time").mousedown(function () {
         $(this).data('clicked', true);
     });
 
-    $("#slider-time").mouseup(function() {
+    $("#slider-time").mouseup(function () {
         $(this).data('clicked', false);
     });
 
     // Volume
     $("#volume-slider").bind('change', () => {
         audioPlayer.volume = $("#volume-slider").val() / 100;
+    });
+
+    // Check if the user is scrolling because loop takes over otherwise
+    $(".list").scroll(function () {
+        $(this).data('clicked', true);
     });
 }
 
@@ -148,6 +218,23 @@ function time_loop() {
     const cur_time = toInt(audioPlayer.currentTime);
     let cur_minutes = toInt(cur_time / 60);
     let cur_seconds = toInt(cur_time % 60);
+
+    // Highligh current song in blue
+    const array = $(".list").children().map((index) => {
+        // Get every second element because of hr between p elements
+        if (index % 2 != 0) {
+            return index;
+        }
+    });
+
+    // Colour only the current playing one to blue and the rest to white
+    $(".list").children().css("color", "white");
+    $(".list").children().eq(array[current_track]).css("color", "blue");
+
+    // Scroll to next song only if the user isn't scrolling
+    if (!$(".list").data('clicked')) {
+        $(".list").scrollTop(array[current_track] * $(".list").children().eq(1).innerHeight() * 1.37);
+    }
 
     // Move slider-time
     // Check if the user is changing the position
