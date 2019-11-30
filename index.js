@@ -11,6 +11,20 @@ window.onload = () => {
 };
 
 function create_tracks_list() {
+    
+    // Accept only .ogg and .mp3 formats
+    for (let i = 0; i < tracks.length; i++) {
+        const name = tracks[i].split('\\').pop();
+
+        // If a element doesn't contain .ogg .mp3 file formats remove it
+        if (!name.includes('.mp3') && !name.includes('.ogg')) {
+            tracks.splice(i, 1);
+            i--;
+        }
+    }
+
+    console.log("Found " + tracks.length + " track(s)!");
+
     // Create the list of tracks
     let i = 0;
     tracks.forEach(element => {
