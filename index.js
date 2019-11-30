@@ -11,7 +11,7 @@ window.onload = () => {
 };
 
 function create_tracks_list() {
-    
+
     // Accept only .ogg and .mp3 formats
     for (let i = 0; i < tracks.length; i++) {
         const name = tracks[i].split('\\').pop();
@@ -40,11 +40,15 @@ function create_tracks_list() {
         $(".list").on('click', 'p', function () {
             current_track = $(this).attr('id');
             audioPlayer.src = tracks[current_track];
+            const playPromise = audioPlayer.play();
 
-            // Set to paused
-            play_pause = 'play';
-            $("#play-pause").removeClass();
-            $("#play-pause").addClass("fa fa-play fa-lg nav-item");
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+
+                }).catch(error => {
+                    //console.log(error);
+                });
+            }
         });
 
         i++;
