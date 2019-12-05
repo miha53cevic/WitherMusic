@@ -1,4 +1,9 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron');
+const {
+    app,
+    BrowserWindow,
+    Menu,
+    dialog
+} = require('electron');
 
 // electron-json-config - npm package
 const config = require('electron-json-config');
@@ -36,15 +41,20 @@ function createWindow() {
         return arrayOfFiles;
     };
 
-    // Get music folder path otherwise use default
-    global.tracks = getAllFiles(config.get('music-folder', 'C:/Users/Mihael/Music/'));
-    console.log("Config location: " + app.getPath('userData'));
+    // If no config exists ask for the music folder at launch
+    if (!config.has('music-folder')) {
+        showOpen();
+    } else {
+        // Get tracks inside the music folder
+        global.tracks = getAllFiles(config.get('music-folder'));
+        console.log("Config location: " + app.getPath('userData'));
+
+        // Load html file into the window
+        win.loadFile('index.html');
+    }
 
     // Set application title
     win.setTitle('WitherMusic');
-
-    // Load html file into the window
-    win.loadFile('index.html');
 
     win.on('closed', () => {
         // Dereference the window object, usually you would store windows
@@ -53,13 +63,13 @@ function createWindow() {
         win = null
     });
 
-    const menu = Menu.buildFromTemplate([
-        {
+    const menu = Menu.buildFromTemplate([{
             label: 'File',
-            submenu: [
-                {
+            submenu: [{
                     label: 'Set music folder',
-                    click: function() { showOpen(); }
+                    click: function () {
+                        showOpen();
+                    }
                 },
                 {
                     label: 'Refresh',
@@ -75,12 +85,10 @@ function createWindow() {
         },
         {
             label: 'Debug',
-            submenu: [
-                {
-                    label: 'ToogleDevTools',
-                    role: 'toggleDevTools'
-                },
-            ]
+            submenu: [{
+                label: 'ToogleDevTools',
+                role: 'toggleDevTools'
+            }, ]
         }
     ]);
 
@@ -88,7 +96,9 @@ function createWindow() {
 }
 
 function showOpen() {
-    dialog.showOpenDialog({ properties: [ 'openDirectory'] }).then(data => {
+    dialog.showOpenDialog({
+        properties: ['openDirectory']
+    }).then(data => {
         config.set('music-folder', data.filePaths[0]);
         app.quit();
         app.relaunch();
