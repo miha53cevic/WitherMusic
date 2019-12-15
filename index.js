@@ -30,8 +30,11 @@ function create_tracks_list() {
     tracks.forEach(element => {
         $(".list").append("<hr>");
 
+        // Replace all occurences of \ with / for linux compatibility
+        element = element.split('\\').join('/');
+
         // Remove path and take just the name
-        const name = element.split('\\').pop();
+        const name = element.split('/').pop();
 
         $(".list").append(`<p id="${i}" class="list-p">${name}</p>`);
 
