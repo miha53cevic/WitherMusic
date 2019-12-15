@@ -232,7 +232,8 @@ function toInt(number) {
 function time_loop() {
 
     // Set song name
-    const name = tracks[current_track].split('\\').pop();
+    const track = tracks[current_track].split('\\').join('/');
+    const name = track.split('/').pop();
     $('.song-name').text(name);
 
     // Get current time in the song
