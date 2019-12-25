@@ -97,7 +97,7 @@ function init() {
         if (current_track >= tracks.length) {
             current_track = 0;
         }
-        console.log(current_track);
+        
         audioPlayer.src = tracks[current_track];
         audioPlayer.play();
 
