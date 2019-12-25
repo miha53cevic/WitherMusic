@@ -10,7 +10,7 @@ window.onload = () => {
     time_loop();
 };
 
-function create_tracks_list() {
+function create_tracks_list(alphebeticalSort = false) {
 
     // Accept only .ogg and .mp3 formats
     for (let i = 0; i < tracks.length; i++) {
@@ -24,6 +24,23 @@ function create_tracks_list() {
     }
 
     console.log("Found " + tracks.length + " track(s)!");
+
+    // Sort by alphebetical order
+    if (alphebeticalSort) {
+        tracks.sort((a, b) => {
+            let element1 = a.split('\\').join('/');
+            let element2 = b.split('\\').join('/');
+
+            element1 = element1.split('/').pop();
+            element2 = element2.split('/').pop();
+
+            element1 = element1.toLowerCase();
+            element2 = element2.toLowerCase();
+            
+            // if (a < b) return -1 or (if (b < a) return 1 or 0), na kraju returna -1, 1, ili 0
+            return element1 < element2 ? -1 : element2 < element1 ? 1 : 0;
+        });
+    }
 
     // Create the list of tracks
     let i = 0;
@@ -73,7 +90,14 @@ function init() {
 
     // Check if audio has finished
     audioPlayer.addEventListener('ended', () => {
+
         current_track++;
+
+        // If the end of the list has been hit reset to first position
+        if (current_track >= tracks.length) {
+            current_track = 0;
+        }
+        console.log(current_track);
         audioPlayer.src = tracks[current_track];
         audioPlayer.play();
 
@@ -82,7 +106,7 @@ function init() {
     });
 
     // Create the list of tracks
-    create_tracks_list();
+    create_tracks_list(true);
 
     // Initialy hide list-down and the list
     $("#list-down").hide();
@@ -160,6 +184,14 @@ function init() {
 
         } else {
             $("#random").css('background-color', 'transparent');
+
+            // Remove all child nodes
+            $(".list").empty();
+            // Create a new tracklist that is sorted like default
+            create_tracks_list(true);
+            // Play the new current song
+            audioPlayer.src = tracks[current_track];
+            audioPlayer.play();
         }
     });
 
