@@ -222,7 +222,7 @@ function init() {
 
     // Skip forward
     $("#step-forward").bind('click', () => {
-        if (current_track < tracks.length) {
+        if (current_track + 1 < tracks.length) {
             current_track++;
             audioPlayer.src = tracks[current_track];
             audioPlayer.play();
