@@ -88,6 +88,9 @@ function shuffleArray(array) {
 
 function init() {
 
+    // Create the list of tracks
+    create_tracks_list(true);
+
     // Initialize player
     audioPlayer = new Audio(tracks[current_track]);
     audioPlayer.play();
@@ -108,9 +111,6 @@ function init() {
         // Set the scroll to the next song
         $(".list").data('clicked', false);
     });
-
-    // Create the list of tracks
-    create_tracks_list(true);
 
     // Initialy hide list-down and the list
     $("#list-down").hide();
