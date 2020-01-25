@@ -10,6 +10,10 @@ window.onload = () => {
     time_loop();
 };
 
+function toInt(number) {
+    return Number.parseInt((number).toString());
+}
+
 function create_tracks_list(alphebeticalSort = false) {
 
     // Accept only .ogg and .mp3 formats
@@ -58,7 +62,7 @@ function create_tracks_list(alphebeticalSort = false) {
         // Choose song with click on the list
         // Add event on every <p> element in the list
         $(".list").on('click', 'p', function () {
-            current_track = $(this).attr('id');
+            current_track = toInt($(this).attr('id'));
             audioPlayer.src = tracks[current_track];
             const playPromise = audioPlayer.play();
 
@@ -255,10 +259,6 @@ function init() {
     $(".list").scroll(function () {
         $(this).data('clicked', true);
     });
-}
-
-function toInt(number) {
-    return Number.parseInt((number).toString());
 }
 
 function time_loop() {
