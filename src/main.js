@@ -2,7 +2,7 @@ const {
     app,
     BrowserWindow,
     Menu,
-    dialog
+    dialog,
 } = require('electron');
 
 // electron-json-config - npm package
@@ -50,7 +50,7 @@ function createWindow() {
         console.log("Config location: " + app.getPath('userData'));
 
         // Load html file into the window
-        win.loadFile('index.html');
+        win.loadFile('src/index.html');
     }
 
     // Set application title
@@ -82,6 +82,15 @@ function createWindow() {
                     }
                 }
             ]
+        },
+        {
+            label: 'Options',
+            submenu: [{
+                label: 'Enable/Disable FFT Visualiser',
+                click: function () {
+                    win.webContents.send('enableFFT', null);
+                }
+            }]
         },
         {
             label: 'Debug',

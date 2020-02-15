@@ -5,10 +5,37 @@ let repeat = false;
 let audioPlayer;
 let current_track = 0;
 
+let Visualiser;
+
 window.onload = () => {
     init();
     time_loop();
+    setupVisualiser();
 };
+
+///////////////////////////////////////
+
+function setupVisualiser() {
+    Visualiser = new WebAudioVisualizer(audioPlayer, 1024, window.innerWidth, window.innerHeight);
+
+    const canvas = document.getElementById('canvas');
+    window.addEventListener('resize', function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        WIDTH = canvas.width;
+        HEIGHT = canvas.height;
+    });
+}
+
+function fftLoop() {
+    Visualiser.draw('black', 'red');
+
+    if (enableFFT)
+        window.requestAnimationFrame(fftLoop);
+    else clear('black');
+}
+
+///////////////////////////////////////
 
 function toInt(number) {
     return Number.parseInt((number).toString());
@@ -40,7 +67,7 @@ function create_tracks_list(alphebeticalSort = false) {
 
             element1 = element1.toLowerCase();
             element2 = element2.toLowerCase();
-            
+
             // if (a < b) return -1 or (if (b < a) return 1 or 0), na kraju returna -1, 1, ili 0
             return element1 < element2 ? -1 : element2 < element1 ? 1 : 0;
         });
@@ -104,7 +131,7 @@ function init() {
         if (current_track >= tracks.length) {
             current_track = 0;
         }
-        
+
         audioPlayer.src = tracks[current_track];
         audioPlayer.play();
 

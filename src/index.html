@@ -25,10 +25,22 @@
         const tracks = window.nodeRequire('electron').remote.getGlobal('tracks');
         console.log(tracks);
     </script>
+    <script>
+        let enableFFT = false;
+        const { ipcRenderer } = window.nodeRequire('electron');
+        ipcRenderer.on('enableFFT', (event, arg) => {
+            enableFFT = !enableFFT;
+
+            if (enableFFT) fftLoop();
+        });
+    </script>
+    <script src="fft_extension/mihaSimpleCanvas.js"></script>
+    <script src="fft_extension/webAudioVisualiser.js"></script>
     <script src="index.js"></script>
 </head>
 
 <body>
+    <div id="canvasArea"></div>
 
     <main class="main">
         <header class="header">
