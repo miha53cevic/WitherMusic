@@ -168,7 +168,7 @@ function rectCircleStrip(centerX, centerY, array, colour = 'white', radius = 50,
         const y = cy + r * Math.sin(toRadian(a));
 
         // Translate to the circle center then translate to each point and rotate it
-        translate(centerX / 2, centerY / 2);
+        translate(centerX, centerY);
         translate(x, y);
         rotate(toRadian(a));
         drawFillRect(0, 0, array[i], width, colour);
