@@ -16,7 +16,7 @@ window.onload = () => {
 ///////////////////////////////////////
 
 function setupVisualiser() {
-    Visualiser = new WebAudioVisualizer(audioPlayer, 1024, window.innerWidth, window.innerHeight);
+    Visualiser = new WebAudioVisualizer(audioPlayer, 2048, window.innerWidth, window.innerHeight);
 
     const canvas = document.getElementById('canvas');
     window.addEventListener('resize', function () {
