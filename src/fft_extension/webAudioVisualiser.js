@@ -6,15 +6,26 @@ class WebAudioVisualizer {
     constructor(audioElement, fftSize = 256, canvas_width = 400, canvas_height = 400) {
         this.audioContext = new AudioContext();
 
-        // Create the source node
+        // Create the source node, track is the source
         this.track = this.audioContext.createMediaElementSource(audioElement);
-        // Connect the source node to the song destination so we can use it for sound manipulation
-        this.track.connect(this.audioContext.destination);
-        // Create a visualizer
+        // Create a splitter that splits the audio into 2 channels
+        this.splitter = this.audioContext.createChannelSplitter(2);
+        // Create a merger which is used to connect the audio channels back together before we play it
+        this.merger = this.audioContext.createChannelMerger(2);
+        // Connect the audio source to the splitter so we split it
+        this.track.connect(this.splitter);
+        // Create a analyser for FFT computation
         this.analyzer = this.audioContext.createAnalyser();
-        this.track.connect(this.analyzer);
+        // Connect the analyzer to the first channel
+        this.splitter.connect(this.analyzer, 0);
         // Set the fft sample count
         this.analyzer.fftSize = fftSize;
+        // We have to merge the channels back before we can play the audio
+        // The first argument is the channel we are connecting from and the other argument is the channel we are connecting to
+        this.splitter.connect(this.merger, 0, 0);
+        this.splitter.connect(this.merger, 1, 1);
+        // After we merge the channels back together we send it to the user 
+        this.merger.connect(this.audioContext.destination);
 
         // check if context is in suspended state (autoplay policy)
         if (this.audioContext.state === 'suspended') {
