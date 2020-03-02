@@ -9,7 +9,7 @@ const {
 const config = require('electron-json-config');
 
 const fs = require('fs');
-const path = require("path")
+const path = require("path");
 
 function createWindow() {
 
@@ -19,8 +19,9 @@ function createWindow() {
     let win = new BrowserWindow({
         width: 800,
         height: 480,
+        frame: false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
         }
     });
 

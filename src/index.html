@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- TODO
-    Random button
-    Add option to choose music folder, create taskbar menu open smaller window or something like that
--->
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +9,7 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
     <link rel='stylesheet' href="main.css">
     <script>
-        // Name conflicts
+        // Name conflicts with jquerry
         window.nodeRequire = require;
         delete window.require;
         delete window.exports;
@@ -22,12 +17,15 @@
     </script>
     <script src='jquery/3.4.1/jquery.min.js'></script>
     <script>
+        // Get the track locations from main.js through a global
         const tracks = window.nodeRequire('electron').remote.getGlobal('tracks');
         console.log(tracks);
     </script>
     <script>
         let enableFFT = false;
-        const { ipcRenderer } = window.nodeRequire('electron');
+        const {
+            ipcRenderer
+        } = window.nodeRequire('electron');
         ipcRenderer.on('enableFFT', (event, arg) => {
             enableFFT = !enableFFT;
 
@@ -70,5 +68,15 @@
     <div class="list"></div>
 
 </body>
+<script>
+    // Add the custom titlebar
+    const titlebar = window.nodeRequire('custom-electron-titlebar');
+    const mybar = new titlebar.Titlebar({
+        backgroundColor: titlebar.Color.fromHex('#212121'),
+        overflow: 'hidden',
+        icon: '../assets/icons/win/icon.ico',
+    });
+    mybar.updateTitle('WitherMusic');
+</script>
 
 </html>
