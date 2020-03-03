@@ -49,41 +49,31 @@ class WebAudioVisualizer {
         this.analyzer.getByteFrequencyData(dataArray);
 
         /*  We have N / 2 usable samples
-            frequency = i / sampleRate / N/2
-            48000 Hz / 1024 = 46,875Hz per sample
-
-            8 Band Table
-            0 - 2 = 93.75Hz in range 0 - 93.75Hz
-            1 - 4 = 187,5Hz in range 93.75 - 281.75Hz 
-            2 - 8 repeat the same
-            3 - 16 ...
-            4 - 32 ...
-            5 - 64 ...
-            6 - 128 ...
-            7 - 256 ...
-            8 - 512 ...
-            1022 samples used so we add the last 2 for the last band
-
-            16 Band Table
-            0  - 1 = 46.875Hz in range 0 - 46.875Hz
-            1  - 1 = 46.875Hz in range 46.875 - 93.75Hz
-            2  - 2 = 93.75Hz in range 93.75 - 187,5Hz
-            3  - 2 = 187,5Hz in range 187,5 - 281.75Hz
-            4  - 4 = 187.5Hz in range 281.75 - 469.25Hz
-            5  - 4 = 187.5Hz in range 469.25 - 656.75Hz
-            6  - 8 = 375Hz in range 656.75 - 1031.75Hz
-            7  - 16 = 750Hz in range 1031.75 - 1781.75Hz
-            8  - 16 = 750Hz in range 1781.75 - 2156Hz
-            9  - 32 = 1500Hz in range 2156 - 3656Hz
-            10 - 32 = 1500Hz in range 3656 - 5156Hz
-            11 - 32 = 1500Hz in range 5156 - 6656Hz
-            12 - 64 = 3000Hz in range 6656 - 9656Hz
-            13 - 64 = 3000Hz in range 9656 - 12656Hz
-            14 - 128 = 6000Hz in range 12656 - 18656Hz
-            15 - 128 = 6000Hz in range 18656 - 24656Hz
-            534 samples used so we add the rest to the last band
+            frequency = i * sampleRate / N
+            where 0 <= i <= N/2
             - Note: the other samples are above 20KHz so they are useless for visualisation check this article
             - https://dsp.stackexchange.com/questions/38131/if-humans-can-only-hear-up-to-20-khz-frequency-sound-why-is-music-audio-sampled/38141
+            
+            48000 Hz / 2048 = 23,4375Hz per sample
+
+            16 Band Table
+            0  - 1  = 23.4375Hz  => 0Hz         - 23,4375Hz
+            1  - 1  = 23.4375Hz  => 23.4375Hz   - 46.875Hz
+            2  - 2  = 46.875Hz   => 46.875Hz    - 93.75Hz
+            3  - 2  = 46.875Hz   => 93.75Hz     - 140.625Hz
+            4  - 4  = 93.75Hz    => 140.625Hz   - 234.375Hz
+            5  - 4  = 93.75Hz    => 234.375Hz   - 328.125Hz
+            6  - 8  = 187.5Hz    => 328.125Hz   - 515.625Hz
+            7  - 16 = 375Hz      => 515.625Hz   - 890.625Hz
+            8  - 16 = 375Hz      => 890.625Hz   - 1265.625Hz
+            9  - 32 = 750Hz      => 1265.625Hz  - 2015.625Hz
+            10 - 32 = 750Hz      => 2015.625Hz  - 2765.625Hz
+            11 - 32 = 750Hz      => 2765.625Hz  - 3515.625Hz
+            12 - 64 = 1500Hz     => 3515.625Hz  - 5015.625Hz
+            13 - 64 = 1500Hz     => 5015.625Hz  - 6515.625Hz
+            14 - 128 = 3000Hz    => 6515.625Hz  - 9515.625Hz
+            15 - 512 = 12000Hz   => 9515.625Hz  - 22031.25Hz
+            918 samples used so we add the rest to the last band
         */
 
         let count = 0;
@@ -93,12 +83,16 @@ class WebAudioVisualizer {
             let average = 0;
 
             // Calculate sampleCount should be the same as the 16 band table above
-            if (i % 2 == 0 && i != 0 && (i < 7 || i > 11)) {
+            if (i % 2 == 0 && i != 0 && (i < 7 || i > 11) && i != 15) {
                 sampleCount *= 2;
             }
             else if (i == 7 || i == 9) {
                 sampleCount *= 2;
-            } 
+            } else if (i == 15) {
+                sampleCount *= 4;
+                sampleCount += 106;
+            }
+            //console.log(`${i}: ${sampleCount}`);
 
             // Get average from samples for a band
             for (let j = 0; j < sampleCount; j++) {
