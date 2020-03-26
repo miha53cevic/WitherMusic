@@ -81,8 +81,8 @@ function create_tracks_list(alphebeticalSort = false) {
         // Replace all occurences of \ with / for linux compatibility
         element = element.split('\\').join('/');
 
-        // Remove path and take just the name
-        const name = element.split('/').pop();
+        // Remove path and take just the name (slice the string from 0 to length - 4 beacuse of the .mp3 at the end of the string)
+        const name = element.split('/').pop().slice(0, -4);
 
         $(".list").append(`<p id="${i}" class="list-p">${name}</p>`);
 
@@ -292,7 +292,7 @@ function time_loop() {
 
     // Set song name
     const track = tracks[current_track].split('\\').join('/');
-    const name = track.split('/').pop();
+    const name = track.split('/').pop().slice(0, -4);
     $('.song-name').text(name);
 
     // Get current time in the song
