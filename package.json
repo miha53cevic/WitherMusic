@@ -12,7 +12,7 @@
   "author": "miha53cevic",
   "license": "ISC",
   "devDependencies": {
-    "electron": "7.1.2",
+    "electron": "9.1.0",
     "electron-packager": "^14.1.1"
   },
   "dependencies": {
